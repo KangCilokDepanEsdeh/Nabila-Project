@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="id">
+<html lang="id" class="scroll-smooth">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -405,16 +405,10 @@
             
             let animationFrameId = null;
             let isAutoScrolling = false;
-            let autoScrollTimeout; // Untuk menyimpan ID timeout
-            
-            // Daftar ID section yang akan di-scroll
-            const sections = ['creations', 'stories', 'gallery', 'wishes', 'next'];
-            let currentSectionIndex = 0;
 
             const cancelAutoScroll = () => {
                 if (!isAutoScrolling) return;
                 isAutoScrolling = false;
-                clearTimeout(autoScrollTimeout); // Hentikan scroll otomatis berikutnya
                 if (animationFrameId) {
                     cancelAnimationFrame(animationFrameId);
                     animationFrameId = null;
@@ -422,23 +416,6 @@
                 window.removeEventListener('wheel', cancelAutoScroll);
                 window.removeEventListener('touchmove', cancelAutoScroll);
             };
-            
-            function scrollToNextSection() {
-                if (!isAutoScrolling) return;
-
-                if (currentSectionIndex >= sections.length) {
-                    isAutoScrolling = false; // Selesai di section terakhir
-                    return;
-                }
-
-                const nextSection = document.getElementById(sections[currentSectionIndex]);
-                if (nextSection) {
-                    nextSection.scrollIntoView({ behavior: 'smooth' });
-                    currentSectionIndex++;
-                    // Atur timeout untuk scroll ke section berikutnya setelah 15 detik
-                    autoScrollTimeout = setTimeout(scrollToNextSection, 15000); 
-                }
-            }
 
             playButton.addEventListener('click', () => {
                 playButton.style.display = 'none';
@@ -451,12 +428,28 @@
                     playPromise.catch(error => {});
                 }
 
-                // Tambahkan listener untuk membatalkan scroll jika ada interaksi
-                window.addEventListener('wheel', cancelAutoScroll, { once: true, passive: true });
-                window.addEventListener('touchmove', cancelAutoScroll, { once: true, passive: true });
+                window.addEventListener('wheel', cancelAutoScroll, { passive: true });
+                window.addEventListener('touchmove', cancelAutoScroll, { passive: true });
 
-                // Mulai scroll otomatis ke section pertama setelah 2 detik
-                autoScrollTimeout = setTimeout(scrollToNextSection, 2000);
+                const totalHeight = document.body.scrollHeight - window.innerHeight;
+                const scrollDuration = 180000;
+                let startTime = null;
+
+                function animateScroll(currentTime) {
+                    if (!isAutoScrolling) return;
+                    if (!startTime) startTime = currentTime;
+                    const elapsedTime = currentTime - startTime;
+                    const progress = Math.min(elapsedTime / scrollDuration, 1);
+                    
+                    window.scrollTo(0, totalHeight * progress);
+
+                    if (elapsedTime < scrollDuration) {
+                        animationFrameId = requestAnimationFrame(animateScroll);
+                    } else {
+                        isAutoScrolling = false;
+                    }
+                }
+                animationFrameId = requestAnimationFrame(animateScroll);
             });
 
             const fadeInSections = document.querySelectorAll('.fade-in-section');
