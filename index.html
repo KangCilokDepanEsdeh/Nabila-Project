@@ -1,0 +1,570 @@
+<!DOCTYPE html>
+<html lang="id" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>birthday Love</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;700;900&display=swap" rel="stylesheet">
+    <style>
+        body {
+            position: relative;
+            font-family: 'Poppins', sans-serif;
+            background-color: #f8f7f4;
+            color: #333;
+        }
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background-image: url("assets/images/bg.png");
+            background-size: cover;
+            background-position: center;
+            filter: blur(8px);
+            opacity: 0.3;
+            z-index: -1;
+        }
+        h1, h2, h3 {
+            font-family: 'Poppins', sans-serif;
+            font-weight: 700;
+        }
+        .fade-in-section {
+            opacity: 0;
+            transform: translateY(20px);
+            transition: opacity 0.8s ease-out, transform 0.8s ease-out;
+        }
+        .fade-in-section.is-visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        .countdown-box {
+            background: rgba(255, 255, 255, 0.5);
+            backdrop-filter: blur(5px);
+            border-radius: 0.5rem;
+            padding: 0.5rem 0.75rem;
+            text-align: center;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+        }
+        .countdown-number {
+            font-family: 'Poppins', sans-serif;
+            font-weight: 700;
+            color: #312e81;
+        }
+        .countdown-label {
+            color: #555;
+        }
+        .btn-style {
+            background: linear-gradient(45deg, #1e3a8a, #3b82f6);
+            box-shadow: 0 4px 15px rgba(59, 130, 246, 0.4);
+            transition: all 0.3s ease-in-out;
+        }
+        .btn-style:hover {
+            box-shadow: 0 8px 25px rgba(59, 130, 246, 0.5);
+            transform: scale(1.05) translateY(-2px);
+        }
+        #gallery, #creations {
+            background-color: #172554;
+        }
+        .mockup-card {
+            background: white;
+            border-radius: 0.75rem;
+            padding: 1.5rem;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.07);
+            transition: all 0.3s ease;
+            border: 1px solid #e5e7eb;
+            height: 100%;
+        }
+        .mockup-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 30px rgba(0,0,0,0.1);
+        }
+        @keyframes pulse {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.7; transform: scale(1.05); }
+        }
+        .pulse-animation {
+            animation: pulse 2.5s infinite ease-in-out;
+        }
+        
+        .lightbox {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.9);
+            justify-content: center;
+            align-items: center;
+            animation: fadeIn 0.3s ease;
+        }
+        .lightbox-content {
+            max-width: 90vw;
+            max-height: 80vh;
+            animation: zoomIn 0.3s ease;
+        }
+        .lightbox-nav {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            color: white;
+            font-size: 3rem;
+            cursor: pointer;
+            user-select: none;
+            padding: 1rem;
+            transition: 0.2s;
+        }
+        .lightbox-nav:hover {
+            color: #ccc;
+        }
+        #prevBtn { left: 10px; }
+        #nextBtn { right: 10px; }
+        #closeBtn {
+            position: absolute;
+            top: 20px;
+            right: 30px;
+            color: white;
+            font-size: 2.5rem;
+        }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        @keyframes zoomIn { from { transform: scale(0.8); } to { transform: scale(1); } }
+
+        .confetti {
+            position: fixed;
+            width: 10px;
+            height: 10px;
+            background-color: #f00;
+            opacity: 0;
+            z-index: 1001;
+            pointer-events: none;
+        }
+
+        #surpriseModal.show { display: flex; }
+        #surpriseModal.show > div {
+            transform: scale(1);
+            opacity: 1;
+        }
+
+        @media (max-width: 767px) {
+            .hero-title-main, .hero-title-name {
+                font-size: 2.25rem;
+                line-height: 2.5rem;
+            }
+            .hero-polaroid-container {
+                transform: rotate(3deg) scale(0.9);
+            }
+        }
+    </style>
+</head>
+<body class="overflow-x-hidden">
+
+    <div id="mainContent">
+        <audio id="birthdaySong" loop>
+            <source src="assets/music/kuaminkan.mp3" type="audio/mpeg">
+        </audio>
+
+        <section id="hero" class="min-h-screen flex items-center justify-center py-12 px-6 sm:px-12 md:px-24 fade-in-section">
+            <div class="container mx-auto flex flex-col md:flex-row items-center justify-center gap-8 md:gap-12">
+                <div class="text-center md:text-left md:w-7/12 lg:w-1/2">
+                    <h1 class="text-3xl md:text-4xl lg:text-4xl xl:text-5xl font-bold text-slate-800 leading-tight hero-title-main">Selamat Ulang Tahun,</h1>
+                    <h2 class="text-3xl md:text-4xl lg:text-4xl xl:text-5xl font-bold text-indigo-900 mb-8 hero-title-name">Nabila Atika</h2>
+                    <p class="text-slate-600 mb-4 max-w-md mx-auto md:mx-0 md:text-justify">
+                        Tolong jangan dilihat lebih lanjut, takutnya nanti kamu akan jatuh hati
+                    </p>
+                    <p class="text-slate-600 mb-8 max-w-md mx-auto md:mx-0 md:text-justify">
+                        Sebelum lanjut, silahkan anda mempersiapkan tisu dan kamera untuk melihat momen indah berikut ini
+                    </p>
+
+                    <div id="countdown-container" class="mb-8">
+                        <div id="countdown" class="flex justify-center md:justify-start space-x-2 sm:space-x-4">
+                            <div class="countdown-box"><span id="days" class="block text-2xl sm:text-4xl countdown-number">00</span><span class="block text-xs sm:text-sm countdown-label">Hari</span></div>
+                            <div class="countdown-box"><span id="hours" class="block text-2xl sm:text-4xl countdown-number">00</span><span class="block text-xs sm:text-sm countdown-label">Jam</span></div>
+                            <div class="countdown-box"><span id="minutes" class="block text-2xl sm:text-4xl countdown-number">00</span><span class="block text-xs sm:text-sm countdown-label">Menit</span></div>
+                            <div class="countdown-box"><span id="seconds" class="block text-2xl sm:text-4xl countdown-number">00</span><span class="block text-xs sm:text-sm countdown-label">Detik</span></div>
+                        </div>
+                        <div id="countdown-message" class="text-center md:text-left text-rose-600 font-bold mt-4 text-xl hidden">Waktunya Tiba! 🎉</div>
+                    </div>
+
+                    <button id="playButton" class="btn-style text-white font-bold py-3 px-8 rounded-full">
+                        Coba klik di sini ya! ✨
+                    </button>
+                </div>
+                <div class="md:w-5/12 lg:w-1/2 flex justify-center md:justify-end">
+                    <div class="bg-white p-4 pb-20 rounded-md shadow-2xl transform rotate-3 relative hero-polaroid-container">
+                        <img src="assets/images/foto-utama.jpeg" alt="Foto Ulang Tahun" class="w-64 h-64 md:w-80 md:h-80 object-cover" onerror="this.onerror=null;this.src='https://placehold.co/320x320/e2e8f0/333?text=Foto+Kamu';">
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="creations" class="py-20 px-6 fade-in-section">
+            <div class="container mx-auto max-w-5xl">
+                <h2 class="text-4xl md:text-5xl font-bold text-center mb-12 text-white">Karya Untukmu</h2>
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 md:gap-12 items-start">
+                    
+                    <div class="text-center">
+                        <div class="bg-white p-3 pb-4 rounded-md shadow-lg transform rotate-2 transition-all duration-300 hover:scale-105">
+                            <img src="assets/images/jurnal1.jpg" alt="Mockup Jurnal" class="w-full h-48 object-cover" onerror="this.onerror=null;this.src='https://placehold.co/400x500/e2e8f0/333?text=Foto+Jurnal';">
+                            <h3 class="text-center text-lg font-semibold mt-2 text-slate-700">Jurnal - 2023</h3>
+                        </div>
+                    </div>
+                    
+                    <div class="text-center">
+                        <div class="bg-white p-3 pb-4 rounded-md shadow-lg transform -rotate-2 transition-all duration-300 hover:scale-105">
+                            <img src="assets/images/buku1.png" alt="Mockup Buku" class="w-full h-48 object-cover" onerror="this.onerror=null;this.src='https://placehold.co/400x500/e2e8f0/333?text=Foto+Buku';">
+                             <h3 class="text-center text-lg font-semibold mt-2 text-slate-700">Buku - 2024</h3>
+                        </div>
+                    </div>
+
+                    <div class="mockup-card text-center pulse-animation">
+                        <svg class="w-16 h-16 mx-auto mb-4 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9V3m0 18a9 9 0 009-9m-9 9a9 9 0 00-9-9"></path></svg>
+                        <h3 class="text-xl font-bold mb-2">Website - 2025</h3>
+                        <p class="text-slate-500 text-sm">Membangun ruang digital khusus untukmu agar diabadikan.</p>
+                    </div>
+
+                    <div class="mockup-card text-center pulse-animation">
+                        <svg class="w-16 h-16 mx-auto mb-4 text-amber-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                        <h3 class="text-xl font-bold mb-2">Soon 2026...</h3>
+                        <p class="text-slate-500 text-sm">Akan banyak kejutan berikutnya. Tunggu ya!</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="stories" class="py-20 px-6 fade-in-section">
+            <div class="container mx-auto max-w-5xl">
+                <h2 class="text-4xl md:text-5xl font-bold text-center mb-12 text-slate-800">Pergi untuk Pulang</h2>
+                <div class="space-y-16">
+                    <div class="flex flex-col md:flex-row items-center gap-8">
+                        <div class="w-full md:w-1/3">
+                            <div class="bg-white p-3 pb-16 rounded-md shadow-lg transform rotate-2">
+                               <img src="assets/images/fotoke1.jpg" alt="Cerita 1" class="w-full h-auto object-cover">
+                            </div>
+                        </div>
+                        <div class="md:w-2/3">
+                            <h3 class="text-2xl font-bold text-slate-700 mb-2">Awal Pertemuan - Akhir 2021</h3>
+                            <p class="text-slate-600">Bertemu di Rumah kecil yang bernama "Bidarian Choirs".</p>
+                        </div>
+                    </div>
+                    <div class="flex flex-col md:flex-row-reverse items-center gap-8">
+                        <div class="w-full md:w-1/3">
+                             <div class="bg-white p-3 pb-16 rounded-md shadow-lg transform -rotate-2">
+                                <img src="assets/images/foto2.jpg" alt="Cerita 2" class="w-full h-auto object-cover">
+                            </div>
+                        </div>
+                        <div class="md:w-2/3 md:text-right">
+                            <h3 class="text-2xl font-bold text-slate-700 mb-2">Petualangan Pertama - Akhir 2022</h3>
+                            <p class="text-slate-600">Kemarin kita mencoba mengaturnya sendiri, tapi tuhan memiliki rencana yang berbeda. Bertemu dan Ngobrol di Inovasi Expo 2022</p>
+                        </div>
+                    </div>
+                    <div class="flex flex-col md:flex-row items-center gap-8">
+                        <div class="w-full md:w-1/3">
+                            <div class="bg-white p-3 pb-16 rounded-md shadow-lg transform rotate-1">
+                                <img src="assets/images/foto3.jpg" alt="Cerita 3" class="w-full h-auto object-cover">
+                            </div>
+                        </div>
+                        <div class="md:w-2/3"><h3 class="text-2xl font-bold text-slate-700 mb-2">Belum Waktunya - Awal 2023</h3><p class="text-slate-600">Perayaan Patah Hati, Masih belum siap dengan keadaan masing-masing</p></div>
+                    </div>
+                    <div class="flex flex-col md:flex-row-reverse items-center gap-8">
+                         <div class="w-full md:w-1/3">
+                             <div class="bg-white p-3 pb-16 rounded-md shadow-lg transform -rotate-3">
+                                <img src="assets/images/fotoke4.jpg" alt="Cerita 4" class="w-full h-auto object-cover">
+                            </div>
+                        </div>
+                        <div class="md:w-2/3 md:text-right"><h3 class="text-2xl font-bold text-slate-700 mb-2">Pergi untuk Pulang - Agustus s.d September 2023</h3><p class="text-slate-600">Sejauh apapun kita pergi, kita pasti tau dimana tempat pulang</p></div>
+                    </div>
+                    <div class="flex flex-col md:flex-row items-center gap-8">
+                        <div class="w-full md:w-1/3">
+                            <div class="bg-white p-3 pb-16 rounded-md shadow-lg transform rotate-2">
+                               <img src="assets/images/foto5.jpeg" alt="Cerita 5" class="w-full h-auto object-cover">
+                            </div>
+                        </div>
+                        <div class="md:w-2/3"><h3 class="text-2xl font-bold text-slate-700 mb-2">Saling Melihat Bertumbuh - Akhir 2023</h3><p class="text-slate-600">Hidup memang terlalu singkat untuk tidak berjuang bersama</p></div>
+                    </div>
+                    <div class="flex flex-col md:flex-row-reverse items-center gap-8">
+                         <div class="w-full md:w-1/3">
+                             <div class="bg-white p-3 pb-16 rounded-md shadow-lg transform -rotate-1">
+                                <img src="assets/images/fotoke6.jpg" alt="Cerita 6" class="w-full h-auto object-cover">
+                            </div>
+                        </div>
+                        <div class="md:w-2/3 md:text-right"><h3 class="text-2xl font-bold text-slate-700 mb-2">Saling Melihat Bertumbuh 2 - Akhir 2024</h3><p class="text-slate-600">Bukan tentang seberapa kuat kamu menahan rasa sakit, tetapi seberapa jauh kamu dapat melewatinya</p></div>
+                    </div>
+                    <div class="flex flex-col md:flex-row items-center gap-8">
+                        <div class="w-full md:w-1/3">
+                            <div class="bg-white p-3 pb-16 rounded-md shadow-lg transform rotate-3">
+                                <img src="assets/images/foto7.jpeg" alt="Cerita 7" class="w-full h-auto object-cover">
+                            </div>
+                        </div>
+                        <div class="md:w-2/3"><h3 class="text-2xl font-bold text-slate-700 mb-2">Perjalanan Baru - Awal 2025</h3><p class="text-slate-600">Memulai babak baru dalam hidup, mencoba untuk mengambil resiko, entah itu baik atau buruk</p></div>
+                    </div>
+                    <div class="flex flex-col md:flex-row-reverse items-center gap-8">
+                        <div class="w-full md:w-1/3">
+                             <div class="bg-white p-3 pb-16 rounded-md shadow-lg transform -rotate-2">
+                                <img src="assets/images/foto8.jpeg" alt="Cerita 8" class="w-full h-auto object-cover">
+                            </div>
+                        </div>
+                        <div class="md:w-2/3 md:text-right"><h3 class="text-2xl font-bold text-slate-700 mb-2">Pembuktian - 2025 s.d 2027</h3><p class="text-slate-600">Pembuktian bahwa jarak bukan penghalang untuk saling mendukung dan tumbuh</p></div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="gallery" class="py-20 px-6 fade-in-section">
+            <div class="container mx-auto">
+                <h2 class="text-4xl md:text-5xl font-bold text-center mb-12 text-white">Selembaran Kisah</h2>
+                <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-6">
+                    <div class="bg-white p-2 pb-10 rounded-sm shadow-lg transform transition-all duration-300 hover:scale-105 hover:-rotate-3 cursor-pointer"><img src="assets/images/1.jpeg" alt="Galeri 1" class="gallery-item object-cover w-full h-40"></div>
+                    <div class="bg-white p-2 pb-10 rounded-sm shadow-lg transform transition-all duration-300 hover:scale-105 hover:rotate-3 cursor-pointer"><img src="assets/images/2.jpeg" alt="Galeri 2" class="gallery-item object-cover w-full h-40"></div>
+                    <div class="bg-white p-2 pb-10 rounded-sm shadow-lg transform transition-all duration-300 hover:scale-105 hover:-rotate-2 cursor-pointer"><img src="assets/images/3.jpeg" alt="Galeri 3" class="gallery-item object-cover w-full h-40"></div>
+                    <div class="bg-white p-2 pb-10 rounded-sm shadow-lg transform transition-all duration-300 hover:scale-105 hover:rotate-2 cursor-pointer"><img src="assets/images/4.jpeg" alt="Galeri 4" class="gallery-item object-cover w-full h-40"></div>
+                    <div class="bg-white p-2 pb-10 rounded-sm shadow-lg transform transition-all duration-300 hover:scale-105 hover:-rotate-1 cursor-pointer"><img src="assets/images/5.jpeg" alt="Galeri 5" class="gallery-item object-cover w-full h-40"></div>
+                    <div class="bg-white p-2 pb-10 rounded-sm shadow-lg transform transition-all duration-300 hover:scale-105 hover:rotate-1 cursor-pointer"><img src="assets/images/6.jpeg" alt="Galeri 6" class="gallery-item object-cover w-full h-40"></div>
+                    <div class="bg-white p-2 pb-10 rounded-sm shadow-lg transform transition-all duration-300 hover:scale-105 hover:-rotate-3 cursor-pointer"><img src="assets/images/7.jpeg" alt="Galeri 7" class="gallery-item object-cover w-full h-40"></div>
+                    <div class="bg-white p-2 pb-10 rounded-sm shadow-lg transform transition-all duration-300 hover:scale-105 hover:rotate-3 cursor-pointer"><img src="assets/images/8.jpeg" alt="Galeri 8" class="gallery-item object-cover w-full h-40"></div>
+                    <div class="bg-white p-2 pb-10 rounded-sm shadow-lg transform transition-all duration-300 hover:scale-105 hover:-rotate-2 cursor-pointer"><img src="assets/images/9.jpeg" alt="Galeri 9" class="gallery-item object-cover w-full h-40"></div>
+                    <div class="bg-white p-2 pb-10 rounded-sm shadow-lg transform transition-all duration-300 hover:scale-105 hover:rotate-2 cursor-pointer"><img src="assets/images/10s.jpg" alt="Galeri 10" class="gallery-item object-cover w-full h-40"></div>
+                </div>
+            </div>
+        </section>
+
+        <section id="gallery" class="py-20 px-6 fade-in-section">
+            <div class="container mx-auto">
+                <h2 class="text-4xl md:text-5xl font-bold text-center mb-12 text-white">Dokumentasi Khusus untukmu</h2>
+                <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-6">
+                    <div class="bg-white p-2 pb-10 rounded-sm shadow-lg transform transition-all duration-300 hover:scale-105 hover:-rotate-3 cursor-pointer"><img src="assets/images/11.jpeg" alt="Galeri 1" class="gallery-item object-cover w-full h-40"></div>
+                    <div class="bg-white p-2 pb-10 rounded-sm shadow-lg transform transition-all duration-300 hover:scale-105 hover:rotate-3 cursor-pointer"><img src="assets/images/12.jpeg" alt="Galeri 2" class="gallery-item object-cover w-full h-40"></div>
+                    <div class="bg-white p-2 pb-10 rounded-sm shadow-lg transform transition-all duration-300 hover:scale-105 hover:-rotate-2 cursor-pointer"><img src="assets/images/13.jpeg" alt="Galeri 3" class="gallery-item object-cover w-full h-40"></div>
+                    <div class="bg-white p-2 pb-10 rounded-sm shadow-lg transform transition-all duration-300 hover:scale-105 hover:rotate-2 cursor-pointer"><img src="assets/images/14.jpeg" alt="Galeri 4" class="gallery-item object-cover w-full h-40"></div>
+                    <div class="bg-white p-2 pb-10 rounded-sm shadow-lg transform transition-all duration-300 hover:scale-105 hover:-rotate-1 cursor-pointer"><img src="assets/images/15.jpeg" alt="Galeri 5" class="gallery-item object-cover w-full h-40"></div>
+                    <div class="bg-white p-2 pb-10 rounded-sm shadow-lg transform transition-all duration-300 hover:scale-105 hover:rotate-1 cursor-pointer"><img src="assets/images/16.jpeg" alt="Galeri 6" class="gallery-item object-cover w-full h-40"></div>
+                    <div class="bg-white p-2 pb-10 rounded-sm shadow-lg transform transition-all duration-300 hover:scale-105 hover:-rotate-3 cursor-pointer"><img src="assets/images/17.jpeg" alt="Galeri 7" class="gallery-item object-cover w-full h-40"></div>
+                    <div class="bg-white p-2 pb-10 rounded-sm shadow-lg transform transition-all duration-300 hover:scale-105 hover:rotate-3 cursor-pointer"><img src="assets/images/18.jpeg" alt="Galeri 8" class="gallery-item object-cover w-full h-40"></div>
+                    <div class="bg-white p-2 pb-10 rounded-sm shadow-lg transform transition-all duration-300 hover:scale-105 hover:-rotate-2 cursor-pointer"><img src="assets/images/19.jpeg" alt="Galeri 9" class="gallery-item object-cover w-full h-40"></div>
+                    <div class="bg-white p-2 pb-10 rounded-sm shadow-lg transform transition-all duration-300 hover:scale-105 hover:rotate-2 cursor-pointer"><img src="assets/images/20.jpeg" alt="Galeri 10" class="gallery-item object-cover w-full h-40"></div>
+                </div>
+            </div>
+        </section>
+
+        <section id="wishes" class="py-20 px-6 fade-in-section">
+            <div class="container mx-auto max-w-6xl">
+                <h2 class="text-4xl md:text-5xl font-bold text-center mb-12 text-slate-800">Sepatah Kata</h2>
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                    <div class="bg-white p-6 rounded-xl shadow-lg border-l-4 border-rose-400"><p class="text-slate-600 italic mb-4">"Semoga panjang umur, sehat selalu, dan semua impianmu tercapai. Doa yang terbaik untukmu Sayang"</p><p class="font-bold text-slate-800 text-right">- Orang terganteng sedunia</p></div>
+                    <div class="bg-white p-6 rounded-xl shadow-lg border-l-4 border-purple-400"><p class="text-slate-600 italic mb-4">"Terima kasih untuk semua senyum dan tawamu. Semoga tahun ini dan tahun seterusnya membawa lebih banyak kebahagiaan untukmu."</p><p class="font-bold text-slate-800 text-right">- Fauzan Azhiman H.Hoib</p></div>
+                    <div class="bg-white p-6 rounded-xl shadow-lg border-l-4 border-amber-400"><p class="text-slate-600 italic mb-4">"Barakallah fii umrikii Kesayangan Kakak. Semoga Allah SWT selalu menjaga, melimpahkan rahmat dan berkah-Nya kepadamu"</p><p class="font-bold text-slate-800 text-right">- Calon Suamimu</p></div>
+                </div>
+            </div>
+        </section>
+
+        <footer id="next" class="py-20 px-6 text-center bg-slate-800 text-white fade-in-section">
+            <div class="container mx-auto">
+                <h2 class="text-3xl font-bold mb-4">Eittsss... Tunggu Dulu!</h2>
+                <p class="text-slate-300 mb-8">Sebetulnya masih banyak yang ingin aku berikan, tapi...</p>
+                <button id="openModalBtn" class="btn-style inline-block text-white font-bold py-3 px-8 rounded-full">
+                    Coba cek disini dulu deh!
+                </button>
+            </div>
+        </footer>
+    </div>
+    
+    <div id="lightbox" class="lightbox">
+        <span id="closeBtn" class="lightbox-nav">&times;</span>
+        <span id="prevBtn" class="lightbox-nav">&#10094;</span>
+        <img id="lightboxImg" class="lightbox-content">
+        <span id="nextBtn" class="lightbox-nav">&#10095;</span>
+    </div>
+
+    <div id="surpriseModal" class="fixed inset-0 bg-black/60 z-50 hidden items-center justify-center p-4 transition-opacity duration-300">
+        <div class="bg-white rounded-lg shadow-2xl p-8 max-w-lg w-full text-center relative transform scale-95 opacity-0 transition-all duration-300">
+            <button id="closeModalBtn" class="absolute top-2 right-4 text-3xl text-gray-400 hover:text-gray-600">&times;</button>
+            <h3 class="text-3xl font-bold text-indigo-900 mb-4">Untuk Kamu...</h3>
+            <p class="text-slate-600 mb-6 text-left">
+                Selamat ulang tahun, sayang. 
+                <br><br>
+                Di hari yang spesial ini, aku cuma mau bilang terima kasih. Doa terbaik untukmu.
+                <br><br>
+                Kemoyyy ᥫ᭡
+            </p>
+            <a href="https://drive.google.com/drive/folders/1o63vIfFm2UdFIp7xSnKaxffnepWV4e4d?usp=sharing" target="_blank" class="btn-style inline-block text-white font-bold py-3 px-8 rounded-full">
+                Satu Kejutan Terakhir
+            </a>
+        </div>
+    </div>
+
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const playButton = document.getElementById('playButton');
+            const birthdaySong = document.getElementById('birthdaySong');
+            
+            let animationFrameId = null;
+            let isAutoScrolling = false;
+
+            const cancelAutoScroll = () => {
+                if (!isAutoScrolling) return;
+                isAutoScrolling = false;
+                if (animationFrameId) {
+                    cancelAnimationFrame(animationFrameId);
+                    animationFrameId = null;
+                }
+                window.removeEventListener('wheel', cancelAutoScroll);
+                window.removeEventListener('touchmove', cancelAutoScroll);
+            };
+
+            playButton.addEventListener('click', () => {
+                playButton.style.display = 'none';
+                isAutoScrolling = true;
+                
+                createConfetti();
+
+                const playPromise = birthdaySong.play();
+                if (playPromise !== undefined) {
+                    playPromise.catch(error => {});
+                }
+
+                window.addEventListener('wheel', cancelAutoScroll, { passive: true });
+                window.addEventListener('touchmove', cancelAutoScroll, { passive: true });
+
+                const totalHeight = document.body.scrollHeight - window.innerHeight;
+                const scrollDuration = 180000;
+                let startTime = null;
+
+                function animateScroll(currentTime) {
+                    if (!isAutoScrolling) return;
+                    if (!startTime) startTime = currentTime;
+                    const elapsedTime = currentTime - startTime;
+                    const progress = Math.min(elapsedTime / scrollDuration, 1);
+                    
+                    window.scrollTo(0, totalHeight * progress);
+
+                    if (elapsedTime < scrollDuration) {
+                        animationFrameId = requestAnimationFrame(animateScroll);
+                    } else {
+                        isAutoScrolling = false;
+                    }
+                }
+                animationFrameId = requestAnimationFrame(animateScroll);
+            });
+
+            const fadeInSections = document.querySelectorAll('.fade-in-section');
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('is-visible');
+                    }
+                });
+            }, { threshold: 0.1 });
+            fadeInSections.forEach(section => observer.observe(section));
+
+            const countdownDate = new Date('November 12, 2025 00:00:00').getTime();
+            const daysEl = document.getElementById('days');
+            const hoursEl = document.getElementById('hours');
+            const minutesEl = document.getElementById('minutes');
+            const secondsEl = document.getElementById('seconds');
+            const countdownEl = document.getElementById('countdown');
+            const messageEl = document.getElementById('countdown-message');
+
+            const countdownInterval = setInterval(() => {
+                const now = new Date().getTime();
+                const distance = countdownDate - now;
+
+                if (distance < 0) {
+                    clearInterval(countdownInterval);
+                    countdownEl.classList.add('hidden');
+                    messageEl.classList.remove('hidden');
+                    return;
+                }
+
+                const days = Math.floor(distance / (1000 * 60 * 60 * 24));
+                const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+                const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+                const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+
+                daysEl.innerText = String(days).padStart(2, '0');
+                hoursEl.innerText = String(hours).padStart(2, '0');
+                minutesEl.innerText = String(minutes).padStart(2, '0');
+                secondsEl.innerText = String(seconds).padStart(2, '0');
+            }, 1000);
+
+            const lightbox = document.getElementById('lightbox');
+            const lightboxImg = document.getElementById('lightboxImg');
+            const galleryItems = document.querySelectorAll('.gallery-item');
+            const closeBtn = document.getElementById('closeBtn');
+            const prevBtn = document.getElementById('prevBtn');
+            const nextBtn = document.getElementById('nextBtn');
+            let currentIndex = 0;
+
+            galleryItems.forEach((item, index) => {
+                item.parentElement.addEventListener('click', () => { 
+                    currentIndex = index;
+                    updateLightboxImage();
+                    lightbox.style.display = 'flex';
+                });
+            });
+
+            function updateLightboxImage() {
+                const imgElement = galleryItems[currentIndex];
+                if (imgElement) {
+                    lightboxImg.src = imgElement.src;
+                }
+            }
+
+            closeBtn.addEventListener('click', () => lightbox.style.display = 'none');
+            prevBtn.addEventListener('click', () => {
+                currentIndex = (currentIndex - 1 + galleryItems.length) % galleryItems.length;
+                updateLightboxImage();
+            });
+            nextBtn.addEventListener('click', () => {
+                currentIndex = (currentIndex + 1) % galleryItems.length;
+                updateLightboxImage();
+            });
+
+            function createConfetti() {
+                for (let i = 0; i < 100; i++) {
+                    const confetti = document.createElement('div');
+                    confetti.className = 'confetti';
+                    document.body.appendChild(confetti);
+
+                    const colors = ['#f472b6', '#3b82f6', '#a78bfa', '#34d399', '#facc15'];
+                    confetti.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+                    
+                    confetti.style.left = Math.random() * 100 + 'vw';
+                    confetti.style.top = Math.random() * -50 + 'vh';
+                    
+                    const anim = confetti.animate([
+                        { transform: `translateY(0) rotate(0deg)`, opacity: 1 },
+                        { transform: `translateY(120vh) rotate(${Math.random() * 720}deg)`, opacity: 0 }
+                    ], {
+                        duration: Math.random() * 3000 + 2000,
+                        easing: 'ease-out'
+                    });
+                    
+                    anim.onfinish = () => confetti.remove();
+                }
+            }
+
+            const openModalBtn = document.getElementById('openModalBtn');
+            const closeModalBtn = document.getElementById('closeModalBtn');
+            const surpriseModal = document.getElementById('surpriseModal');
+
+            openModalBtn.addEventListener('click', () => {
+                surpriseModal.classList.add('show');
+            });
+            closeModalBtn.addEventListener('click', () => {
+                surpriseModal.classList.remove('show');
+            });
+            surpriseModal.addEventListener('click', (e) => {
+                if (e.target === surpriseModal) {
+                    surpriseModal.classList.remove('show');
+                }
+            });
+        });
+    </script>
+</body>
+</html>
